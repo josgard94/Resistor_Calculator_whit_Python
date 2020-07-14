@@ -32,10 +32,11 @@ class BandCodeCalculator:
 		
 		print("Color tolerancia: Marron, Rojo, Oro, Plateado, Verde, Azul, Violeta, Gris");
 		self.tolerance = {"marron":"+/- 1%", "rojo":"+/- 2%", "oro":"+/- 5%","plateado":"+/- 20%", "verde":"+/- 5%", "azul":"+/- 0.25", "violeta":"+/- 0.10", "gris":"+/- 0.05"};
+		self.Ntolerance = {"marron":0.01, "rojo":0.02, "oro":0.05,"plateado":0.20, "verde":0.05, "azul":0.0025, "violeta":0.0010, "gris":0.0005};
 		self.color = input(f"color de tolerancia:")
 		self.color = self.color.lower()
 		if self.color in self.tolerance:
-			return self.tolerance.get(self.color)
+			return self.tolerance.get(self.color), self.Ntolerance.get(self.color);
 
 	def get_PPM(self):
 		
@@ -46,14 +47,23 @@ class BandCodeCalculator:
 		if self.color in self.dicPPM:
 			return self.dicPPM.get(self.color)
 
-	def Calculation_logic(self, NumberBand, Val, mul, tol):
+	def Calculation_logic(self, NumberBand, Val, mul, tol, ntol):
 		
 		if self.NumberBand == 4:
 			self.omhs = (Val[0]*10 + Val[1])*10**mul;
-			return self.omhs;
+			self.Rango1 = self.omhs - (self.omhs * ntol);
+			self.Rango2 = self.omhs + (self.omhs * ntol);
+
+			return self.omhs, self.Rango1,self.Rango2;
+
 		elif self.NumberBand == 5 or self.NumberBand == 6:
 			self.omhs = (Val[0]*10**2 + Val[1]*10 + Val[2])*10**mul;
-			return self.omhs;	
+			self.Rango1 = self.omhs - (self.omhs * ntol);
+			self.Rango2 = self.omhs + (self.omhs * ntol);
+
+			return self.omhs, self.Rango1,self.Rango2;
+
+	
 
 if __name__  == '__main__':
 
@@ -70,9 +80,10 @@ if __name__  == '__main__':
 			elif i == 2:
 				Mul = ObjClass.get_multiplicador();
 			elif i == 3:
-				tol = ObjClass.get_tolerance();
-		
-		print("valor de la resistencia: ",str(ObjClass.Calculation_logic(NumberBand, ValColorBan, Mul, tol)),"ohms tolerancia: ",tol);
+				tol,Ntol = ObjClass.get_tolerance();
+		ohms1,Rango11,Rango22 = ObjClass.Calculation_logic(NumberBand, ValColorBan, Mul, tol, Ntol)
+		print("valor de la resistencia: ",ohms1,"ohms tolerancia: ",tol);
+		print("rango de tolerancia: [", Rango11," , ", Rango22, "] ohms");
 	
 	if NumberBand == 5:
 		
@@ -83,9 +94,11 @@ if __name__  == '__main__':
 			elif i == 3:
 				Mul = ObjClass.get_multiplicador();
 			elif i == 4:
-				tol = ObjClass.get_tolerance();
+				tol,Ntol = ObjClass.get_tolerance();
 		
-		print("valor de la resistencia: ",str(ObjClass.Calculation_logic(NumberBand, ValColorBan, Mul, tol)),"ohms tolerancia: ",tol);
+		ohms1,Rango11,Rango22 = ObjClass.Calculation_logic(NumberBand, ValColorBan, Mul, tol, Ntol)
+		print("valor de la resistencia: ",ohms1,"ohms tolerancia: ",tol);
+		print("rango de tolerancia: [", Rango11," , ", Rango22, "] ohms");
 	
 	if NumberBand == 6:
 		
@@ -96,8 +109,9 @@ if __name__  == '__main__':
 			elif i == 3:
 				Mul = ObjClass.get_multiplicador();
 			elif i == 4:
-				tol = ObjClass.get_tolerance();
+				tol,Ntol = ObjClass.get_tolerance();
 			elif i == 5:
 				ppm = ObjClass.get_PPM();
-		
-		print("valor de la resistencia: ",str(ObjClass.Calculation_logic(NumberBand, ValColorBan, Mul, tol)),"ohms tolerancia: ",tol," ", ppm,);
+		ohms1,Rango11,Rango22 = ObjClass.Calculation_logic(NumberBand, ValColorBan, Mul, tol, Ntol)
+		print("valor de la resistencia: ",ohms1,"ohms tolerancia: ",tol," ", ppm,);
+		print("rango de tolerancia: [", Rango11," , ", Rango22, "] ohms");
