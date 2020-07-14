@@ -1,3 +1,7 @@
+#
+#	Autor: Edgard Díaz
+#	Date: 01 -07 - 2020
+#
 class BandCodeCalculator:
 
 	def print_options(self):
